@@ -1,0 +1,562 @@
+<!DOCTYPE html>
+<!-- saved from url=(0027)https://www.alltoolbox.app/ -->
+<html lang="zh-CN" data-theme="light"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AllToolBox — 专为XTC打造的ADB工具箱</title>
+  <meta name="description" content="AllToolBox 提供自动化刷机、ADB工具集成、安卓救砖等功能">
+  <link rel="icon" href="./AllToolBox — 专为XTC打造的ADB工具箱_files/logo.png" type="image/png">
+  <link rel="stylesheet" href="./AllToolBox — 专为XTC打造的ADB工具箱_files/style.css">
+  <script src="./AllToolBox — 专为XTC打造的ADB工具箱_files/icons.js.下载" defer=""></script>
+</head>
+
+<body>
+
+  <!-- Preloader -->
+  <div id="preloader" class="preloader hidden" style="display: none;">
+    <div class="loader-geometry">
+      <div class="hex"></div>
+      <div class="hex inner"></div>
+      <div class="glow-point"></div>
+    </div>
+  </div>
+
+  <!-- Navbar -->
+  <nav class="navbar" id="navbar">
+    <div class="nav-container">
+      <div class="nav-left">
+        <button class="menu-btn" id="menuToggle" aria-label="Menu">
+          <span></span><span></span><span></span>
+        </button>
+        <a href="https://www.alltoolbox.app/#" class="logo" data-page="home">
+          <div class="logo-box">
+            <img src="./AllToolBox — 专为XTC打造的ADB工具箱_files/logo.png" alt="AllToolBox" class="logo-img">
+          </div>
+          <span class="logo-text">AllToolBox</span>
+        </a>
+      </div>
+      <div class="nav-links" id="navLinks">
+        <a href="https://www.alltoolbox.app/#home" class="nav-link active" data-page="home" data-i18n="nav.home">首页</a>
+        <a href="https://www.alltoolbox.app/#changelog" class="nav-link" data-page="changelog" data-i18n="nav.changelog">日志</a>
+        <a href="https://www.alltoolbox.app/#about" class="nav-link" data-page="about" data-i18n="nav.about">关于</a>
+      </div>
+      <div class="nav-right">
+        <button class="icon-btn" id="langBtn" title="Language">
+          <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false" width="1em" height="1em" class="svg-icon material-icons-round" data-icon="translate" data-icon-done="1"><path d="M12.87 15.07l-2.54-2.51.03-.03A17.52 17.52 0 0 0 14.07 6H17V4h-7V2H8v2H1v2h11.17C11.5 7.92 10.44 9.75 9 11.35 8.07 10.32 7.3 9.19 6.69 8h-2c.73 1.63 1.73 3.17 2.98 4.56l-5.09 5.02L4 19l5-5 3.11 3.11.76-2.04zM18.5 10h-2L12 22h2l1.12-3h4.75L21 22h2l-4.5-12zm-2.62 7l1.62-4.33L19.12 17h-3.24z"></path></svg>
+        </button>
+        <div class="lang-popup" id="langPopup">
+          <button class="lang-opt active" data-lang="zh">中文</button>
+          <button class="lang-opt" data-lang="en">EN</button>
+          <button class="lang-opt" data-lang="ru">RU</button>
+        </div>
+        <button class="icon-btn" id="themeBtn" title="Toggle Theme">
+          <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false" width="1em" height="1em" class="svg-icon material-icons-round" data-icon="dark_mode" id="themeIcon" data-icon-done="1"><path d="M12 3a9 9 0 1 0 9 9c0-.46-.04-.92-.1-1.36a5.389 5.389 0 0 1-4.4 2.26 5.403 5.403 0 0 1-3.14-9.8c-.44-.06-.9-.1-1.36-.1z"></path></svg>
+        </button>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Mobile Sidebar -->
+  <div class="sidebar-mask" id="sidebarMask"></div>
+  <aside class="sidebar" id="sidebar">
+    <div class="sb-head">
+      <img src="./AllToolBox — 专为XTC打造的ADB工具箱_files/logo.png" alt="" class="sb-logo">
+      <div>
+        <div class="sb-title">AllToolBox</div>
+        <div class="sb-sub" data-i18n="nav.subtitle">XTC ADB工具箱</div>
+      </div>
+    </div>
+    <nav class="sb-nav">
+      <a href="https://www.alltoolbox.app/#home" class="sb-link active" data-page="home">
+        <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false" width="1em" height="1em" class="svg-icon material-icons-round" data-icon="home" data-icon-done="1"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"></path></svg>
+        <span data-i18n="nav.home">首页</span>
+      </a>
+      <a href="https://www.alltoolbox.app/#changelog" class="sb-link" data-page="changelog">
+        <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false" width="1em" height="1em" class="svg-icon material-icons-round" data-icon="update" data-icon-done="1"><path d="M21 10.12h-6.78l2.74-2.82c-2.73-2.7-7.15-2.8-9.88-.1a6.887 6.887 0 0 0 0 9.79 7.02 7.02 0 0 0 9.88 0C18.32 15.4 19 13.79 19 12.1h2c0 1.69-.5 3.37-1.53 4.75a9.008 9.008 0 0 1-12.72 1.34A8.949 8.949 0 0 1 5.66 5.72a8.993 8.993 0 0 1 12.68 0L21 3v7.12zM12.5 8v4.25l3.5 2.08-.72 1.21L11 13V8z"></path></svg>
+        <span data-i18n="nav.changelog">日志</span>
+      </a>
+      <a href="https://www.alltoolbox.app/#about" class="sb-link" data-page="about">
+        <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false" width="1em" height="1em" class="svg-icon material-icons-round" data-icon="info" data-icon-done="1"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"></path></svg>
+        <span data-i18n="nav.about">关于</span>
+      </a>
+      <div class="sb-hr"></div>
+      <a href="https://qm.qq.com/q/Y1Ix4uSE0K" target="_blank" class="sb-link">
+        <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false" width="1em" height="1em" class="svg-icon material-icons-round" data-icon="group" data-icon-done="1"><path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5s-3 1.34-3 3 1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"></path></svg>
+        <span data-i18n="nav.qq">QQ群</span>
+        <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false" width="1em" height="1em" class="svg-icon material-icons-round" data-icon="open_in_new" data-icon-done="1" style="height: 15px; width: 15px; margin-left: auto; opacity: 0.5;"><path d="M19 19H5V5h7V3H5c-1.11 0-2 .9-2 2v14c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2v-7h-2v7zM14 3v2h3.59l-9.83 9.83 1.41 1.41L19 6.41V10h2V3h-7z"></path></svg>
+      </a>
+    </nav>
+  </aside>
+
+  <!-- Main Content -->
+  <main class="content">
+
+    <!-- ===== HOME ===== -->
+    <section class="section page-active" id="home">
+      <div class="container hero">
+
+        <!-- Left: Copy -->
+        <div class="hero-content reveal active" style="transition-delay: 0ms;">
+          <div class="hero-ver">
+            <span class="ver-tag" id="verTag">v1.4.6</span>
+            <span class="ver-ch">stable</span>
+          </div>
+          <h1 class="hero-title">
+            <span class="title-xtc-row">
+              <img src="./AllToolBox — 专为XTC打造的ADB工具箱_files/logo.png" alt="logo" class="hero-title-logo">
+              XTC
+            </span>
+            <br><span class="highlight">AllToolBox</span>
+          </h1>
+          <p class="hero-desc" data-i18n="home.desc">提供自动化刷机、ADB工具集成、安卓救砖等功能</p>
+          <!-- 2-column button grid: 直链/历史 | 网盘/QQ群 -->
+          <div class="hero-btn-grid">
+            <a href="https://18284558277:7y1j7te1@webdav.123pan.cn/webdav/AllToolBox1.4.6.zip" class="btn-primary magnetic-btn">
+              <span class="btn-content">
+                <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false" width="1em" height="1em" class="svg-icon material-icons-round" data-icon="download" data-icon-done="1"><path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"></path></svg>
+                <span data-i18n="home.directDL">直链下载</span>
+              </span>
+            </a>
+            <a href="https://qfile.qq.com/q/k5NEASiNSU" target="_blank" class="btn-secondary magnetic-btn">
+              <span class="btn-content">
+                <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false" width="1em" height="1em" class="svg-icon material-icons-round" data-icon="cloud_download" data-icon-done="1"><path d="M19.35 10.04A7.49 7.49 0 0 0 12 4C9.11 4 6.6 5.64 5.35 8.04A5.994 5.994 0 0 0 0 14c0 3.31 2.69 6 6 6h13c2.76 0 5-2.24 5-5 0-2.64-2.05-4.78-4.65-4.96zM17 13l-5 5-5-5h3V9h4v4h3z"></path></svg>
+                <span data-i18n="home.cloudDL">网盘下载</span>
+              </span>
+            </a>
+            <a href="https://www.123865.com/s/qP6Fvd-mpqW" target="_blank" class="btn-ghost">
+              <span class="btn-content">
+                <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false" width="1em" height="1em" class="svg-icon material-icons-round" data-icon="history" data-icon-done="1"><path d="M13 3a9 9 0 0 0-9 9H1l3.89 3.89.07.14L9 12H6c0-3.87 3.13-7 7-7s7 3.13 7 7-3.13 7-7 7c-1.93 0-3.68-.79-4.94-2.06l-1.42 1.42A8.954 8.954 0 0 0 13 21a9 9 0 0 0 0-18zm-1 5v5l4.28 2.54.72-1.21-3.5-2.08V8H12z"></path></svg>
+                <span data-i18n="home.history">历史版本</span>
+              </span>
+            </a>
+            <a href="https://qm.qq.com/q/Y1Ix4uSE0K" target="_blank" class="btn-ghost btn-qq">
+              <span class="btn-content">
+                <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false" width="1em" height="1em" class="svg-icon material-icons-round" data-icon="group" data-icon-done="1"><path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5s-3 1.34-3 3 1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"></path></svg>
+                <span data-i18n="nav.qq">QQ群</span>
+              </span>
+            </a>
+          </div>
+        </div>
+
+        <!-- Right: Screenshot -->
+        <div class="hero-visual reveal reveal-right active" style="transition-delay: 42ms;">
+          <div class="hero-image-wrapper" style="transform: translateY(7.48px) rotateY(-21.86deg) rotateX(4.39deg) translateZ(0px);">
+            <img src="./AllToolBox — 专为XTC打造的ADB工具箱_files/1.png" alt="AllToolBox Interface" class="hero-image" width="754" height="454" fetchpriority="high" decoding="async">
+          </div>
+        </div>
+      </div>
+
+      <!-- Feature Cards -->
+      <div class="container cards-section">
+        <h2 class="sec-title reveal">
+          <span class="title-bar"></span>
+          <span data-i18n="home.featuresTitle">核心功能</span>
+        </h2>
+        <div class="bento-grid three-col">
+          <div class="bento-card reveal spot-hover">
+            <div class="spotlight"></div>
+            <div class="card-inner">
+              <div class="card-ico c1"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false" width="1em" height="1em" class="svg-icon material-icons-round" data-icon="phone_android" data-icon-done="1"><path d="M16 1H8C6.34 1 5 2.34 5 4v16c0 1.66 1.34 3 3 3h8c1.66 0 3-1.34 3-3V4c0-1.66-1.34-3-3-3zm-2 20h-4v-1h4v1zm3.25-3H6.75V4h10.5v14z"></path></svg></div>
+              <div class="card-content">
+                <h3 data-i18n="home.f1Title">一键 Root</h3>
+                <p data-i18n="home.f1Desc">全自动Root，支持Z10、ND03等XTC机型</p>
+              </div>
+            </div>
+          </div>
+          <div class="bento-card reveal spot-hover">
+            <div class="spotlight"></div>
+            <div class="card-inner">
+              <div class="card-ico c2"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false" width="1em" height="1em" class="svg-icon material-icons-round" data-icon="terminal" data-icon-done="1"><path d="M20 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 14H4V8h16v10zM6.5 11l1.5 1.5L6.5 14l1 1 2.5-2.5L7.5 10l-1 1zm5.5 3h4v1h-4v-1z"></path></svg></div>
+              <div class="card-content">
+                <h3 data-i18n="home.f2Title">ADB 集成</h3>
+                <p data-i18n="home.f2Desc">设备管理、应用安装、文件传输一站搞定</p>
+              </div>
+            </div>
+          </div>
+          <div class="bento-card reveal spot-hover">
+            <div class="spotlight"></div>
+            <div class="card-inner">
+              <div class="card-ico c3"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false" width="1em" height="1em" class="svg-icon material-icons-round" data-icon="build_circle" data-icon-done="1"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm4.24 14.24l-3.77-3.77c-.98.37-2.14.17-2.93-.62a2.847 2.847 0 0 1-.4-3.54l1.96 1.96 1.41-1.41-1.96-1.96c1.19-.63 2.68-.44 3.67.55.79.79.99 1.95.62 2.93l3.77 3.77-1.05 1.06z"></path></svg></div>
+              <div class="card-content">
+                <h3 data-i18n="home.f3Title">救砖恢复</h3>
+                <p data-i18n="home.f3Desc">9008刷机、超级恢复、离线OTA救砖方案</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Announce Box -->
+      <div class="container">
+        <div class="announce-box reveal" id="announceBox" style="">
+          <div class="announce-head">
+            <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false" width="1em" height="1em" class="svg-icon material-icons-round" data-icon="campaign" data-icon-done="1"><path d="M18 11v2h4v-2h-4zm-2 6.61c.96.71 2.21 1.65 3.2 2.39.4-.53.8-1.07 1.2-1.6-.99-.74-2.24-1.68-3.2-2.4-.4.54-.8 1.08-1.2 1.61zM20.4 5.6c-.4-.53-.8-1.07-1.2-1.6-.99.74-2.24 1.68-3.2 2.4.4.53.8 1.07 1.2 1.6.96-.72 2.21-1.65 3.2-2.4zM4 9c-1.1 0-2 .9-2 2v2c0 1.1.9 2 2 2h1v4h2v-4h1l5 3V6L8 9H4zm11.5 3c0-1.33-.58-2.53-1.5-3.35v6.69c.92-.81 1.5-2.01 1.5-3.34z"></path></svg>
+            <span data-i18n="home.latestUpdate">最新动态</span>
+          </div>
+          <div class="announce-ver" id="announceVer">v1.4.6 — 2026-09-12</div>
+          <ul class="announce-list" id="announceList"><li>优化了下载器配置</li><li>安装xp框架增加了8.1的xp框架</li><li>重新优化了一键root的代码可读性</li><li>简化了无adb运行一键root需要填写的信息</li><li>优化了检查更新，检查资源更新，检查公告更新，改为异步进程，加快工具箱启动速度</li></ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== CHANGELOG ===== -->
+    <section class="section" id="changelog">
+      <div class="container">
+        <div class="pg-head reveal">
+          <h1>
+            <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false" width="1em" height="1em" class="svg-icon material-icons-round" data-icon="update" data-icon-done="1"><path d="M21 10.12h-6.78l2.74-2.82c-2.73-2.7-7.15-2.8-9.88-.1a6.887 6.887 0 0 0 0 9.79 7.02 7.02 0 0 0 9.88 0C18.32 15.4 19 13.79 19 12.1h2c0 1.69-.5 3.37-1.53 4.75a9.008 9.008 0 0 1-12.72 1.34A8.949 8.949 0 0 1 5.66 5.72a8.993 8.993 0 0 1 12.68 0L21 3v7.12zM12.5 8v4.25l3.5 2.08-.72 1.21L11 13V8z"></path></svg>
+            <span data-i18n="changelog.title">更新日志</span>
+          </h1>
+        </div>
+        <div class="timeline" id="timeline">
+    <div class="tl-entry reveal active">
+      <div class="tl-head"><span class="tl-ver">v1.4.6</span><span class="tl-date">2026-09-12</span></div>
+      <ul class="tl-list"><li>优化了下载器配置</li><li>安装xp框架增加了8.1的xp框架</li><li>重新优化了一键root的代码可读性</li><li>简化了无adb运行一键root需要填写的信息</li><li>优化了检查更新，检查资源更新，检查公告更新，改为异步进程，加快工具箱启动速度</li><li>优化了菜单的一些细节</li><li>优化了资源更新，工具箱更新</li><li>新增了一键自动ota功能，从云端自动拉取最新的ota包</li><li>新增了引导报错时有简易中文描述</li><li>解决了使用带进度条的9008刷写时，可能误报不存在的错误的问题</li><li>更新了root预装应用列表</li><li>更新了root预装systemui</li><li>优化了nd03,nd08在root时的自动激活lsp模块功能</li><li>新增了RTOS专区以及RTOS相关功能，由开发者“小猪”提供</li><li>优化了文件选择器，选择文件时将自动打开上一次选择文件时的路径，方便选择文件</li><li>修复了手动强制安装驱动安装不了的问题</li><li>优化了D3一键root，改为非深刷方案</li><li>重写了run_cmd组件，改为alltoolbox风格，输出更加格式化</li><li>优化了多选菜单，可以单击返回上一页直接返回</li><li>优化了公告系统，支持多条公告，随机抽一条展示在主页</li><li>对于不支持systemui的机型，新增了123910的桌面</li></ul>
+    </div>
+    <div class="tl-entry reveal ">
+      <div class="tl-head"><span class="tl-ver">v1.4.5</span><span class="tl-date">2026-08-04</span></div>
+      <ul class="tl-list"><li>优化ota检查qmmi的方法,修复ota的一个问题</li><li>修复无adb执行root的问题</li><li>修复Root后优化的一些问题</li><li>修复菜单一定条件下显示不全，渲染错位，崩溃的问题，优化了滚动效果，优化了多选菜单</li><li>优化了下载器的下载参数</li><li>修复了7.1机型root时无法通过root检查的问题</li><li>修复了8.1机型root时可能无法恢复相册的问题</li><li>修复了8.1机型root后优化删除了无用功能</li><li>优化了z10一键root中检查是否重启三次的方式</li><li>修复了无线adb的bug</li><li>新增了z11一键root</li><li>优化了更新功能</li></ul>
+    </div>
+    <div class="tl-entry reveal ">
+      <div class="tl-head"><span class="tl-ver">v1.4.0</span><span class="tl-date">2026-07-10</span></div>
+      <ul class="tl-list"><li>离线ota新增模拟点击</li><li>新增沉浸状态栏解决通知栏被自动下拉的问题</li><li>去除可能出现的编码问题</li><li>优化文件检查，降低储存空间占用</li><li>修复innermodel的一个问题</li><li>优化dd备份与恢复，使该功能通用化，并修复了一些已知问题</li><li>优化systemplus自激活，优化systemui可能没有激活的问题</li><li>新增无adb一键root功能</li><li>降低检查更新功能的资源消耗，提升检查速度，修复资源版本号下载时未统一的问题。</li><li>优化资源下载相关功能，提升下载速度和请求速度，调整下载策略，调整链接返回策略</li><li>修复卸载模块时不管成功与否，一定显示出错的问题，以及特定环境找不到模块列表的问题</li><li>优化检查root的权限适配twrp的方法，来解决部分命令卡住的问题</li><li>新增手动修复驱动环境，遇到各种问题可以快速重装驱动</li><li>修复调整控制台透明度后，控制台可能乱码的问题</li><li>修复使用多选菜单的地方未考虑到直接选择确定的情况</li><li>修复z10-302的各种已知问题，暂时去除了模拟点击激活lsp模块（以后用其他方法代替）</li><li>优化了主菜单的返回逻辑</li><li>修复了快速启动乱码或闪退或菜单崩溃的问题</li><li>修复8.1Root后优化无法检测到任何可安装模块的问题</li><li>将安卓8.1和11机型的一键root均适配了不刷ud模式</li><li>修复安卓4.4一键root无法安装xtcpatch的问题，以及刷入xp模块功能名称有误</li><li>提升启动器兼容性，新增点击托盘图标将cmd拉到前台，优化启动逻辑，新增最小化到托盘的功能，新增程序崩溃时自动记录日志功能</li><li>新增工具箱暂停（pause）时允许滚动</li><li>新增D3一键root</li></ul>
+    </div>
+    <div class="tl-entry reveal ">
+      <div class="tl-head"><span class="tl-ver">v1.3.9</span><span class="tl-date">2026-06-06</span></div>
+      <ul class="tl-list"><li>修复无法自动下载部分root文件的问题</li><li>修复开启快速启动后，无法启动的问题</li><li>修复ND03,root可能卡在重启三次的问题(无法挂载data)</li><li>优化杀毒软件报毒的问题，尽量减少报毒</li></ul>
+    </div>
+    <div class="tl-entry reveal ">
+      <div class="tl-head"><span class="tl-ver">v1.3.8</span><span class="tl-date">2026-05-31</span></div>
+      <ul class="tl-list"><li>修复不合预期的垃圾日志</li><li>修复一键root下载时链接不正确的问题</li><li>修复手动进入qmmi参数传递错误问题</li><li>修复禁用左键选中</li><li>修复备份与恢复相册</li><li>修复z10刷完dm可能会卡住的问题</li><li>修复root后优化时无法判定systemplus是否成功激活的问题</li><li>修复报错日志以及占用问题</li><li>修复root计时器</li><li>修复root安卓4.4.4Root时无法修复magisk环境</li><li>修复自动判断adb驱动</li><li>修复7.1机型root后可能判断root有误的问题</li><li>修复链接拼接错误，导致无法下载问题</li><li>修复重要应用无法跳过的问题</li><li>修复9008备份与恢复中路径问题导致无法正常恢复</li><li>超级恢复加入询问是否重启</li><li>重构双击运行，增加指定新版控制台启动（如果可以）</li><li>重写检查root权限，兼容性更好，应用于Data方式安装应用，Magisk模块相关</li><li>删除部分弃用功能</li><li>更新资源文件</li><li>用时间戳代替随机数应用于一些日志或缓存文件</li><li>新增关闭无线调试，配对无线调试，手动连接无线调试</li><li>新增列出magisk模块的详细信息，支持异常状态(如twrp)</li><li>新增卸载模块，以及切换卸载模块的模式</li><li>新增切换安装模块的模式，默认使用sh通用方案</li><li>新增真实9008刷入进度条</li><li>新增判断模块安装是否成功</li><li>新增自动安装adb驱动</li><li>新增工具箱设置功能</li><li>新增快速启动</li><li>新增安装APP报错后中文帮助</li><li>新增安卓8.1一键root中对原系统没有systemui支持的机型修复systemui</li><li>新增自动激活systemplus(非模拟点击)</li><li>新增校验*.exe *.dll是否被篡改</li><li>新增重启至fastbootd，仅安卓11机型可用。</li><li>新增Adb通用分区备份与恢复</li><li>新增离线ota快捷进入qmmi</li><li>新增离线ota和超级恢复的下载链接，免登录，免付费</li><li>新增统一样式进度条</li><li>新增设置cmd窗口背景透明度（类似毛玻璃效果）</li><li>新增单独检查资源更新</li><li>新增可调整检查更新间隔时间</li><li>新增alltoolbox模块功能</li><li>新增备份依赖文件在运行文件不匹配时还原</li><li>新增启动程序包含托盘图标，优化禁用快速编辑</li><li>新增一键安装9008驱动</li></ul>
+    </div>
+    <div class="tl-entry reveal ">
+      <div class="tl-head"><span class="tl-ver">v1.3.7fix1</span><span class="tl-date">2026-04-05</span></div>
+      <ul class="tl-list"><li>使用物理机优化下载通道</li><li>修复并优化了投屏功能</li><li>提高LOGO兼容性</li><li>增加文件信息，方便离线导入</li><li>修复ota，v3提示有误的问题</li><li>修复文件选择器的问题</li><li>不再支持通过fastboot进入qmmi</li><li>修复进入qmmi的功能</li><li>修复带有进度条的fh_loader无法正确报错的问题</li></ul>
+    </div>
+    <div class="tl-entry reveal ">
+      <div class="tl-head"><span class="tl-ver">v1.3.7</span><span class="tl-date">2026-04-03</span></div>
+      <ul class="tl-list"><li>优化z10一键root</li><li>修复了备份相册</li><li>增加新功能9008唯一分区备份</li><li>复活了更新功能，提升下载速度</li><li>修复了7.1安装xp框架</li><li>更新了com.zcg.xtcpatch-10030</li><li>更新了xtcpatch/imoopatch</li><li>sysp和wcp2更新</li><li>xtcpatch/imoopatch支持w2100</li><li>更新驱动检查</li><li>恢复出厂设置支持更多机型</li><li>innermodel对照表补全更多机型</li><li>模块和应用资源优化</li><li>z10已添加预装个人中心防崩</li><li>重构9008端口获取，兼容性增强</li><li>优化修补boot速度</li><li>新增无线调试</li><li>全部适配新菜单</li><li>修复刷入twrp</li><li>修复恢复出厂设置</li><li>batch适配新菜单</li><li>修改z10-dm刷写全自动</li><li>重置与修复刷入twrp[已对全系列机型支持]</li><li>桌面同步更新</li><li>应用更新</li><li>z10的Root文件已使用260116</li><li>离线ota如果检测到不在qmmi状态下改为按任意键重新尝试</li><li>重构高级重启并支持更多重启</li><li>安装重要应用自动重试3次</li><li>深度优化nd03自动化root，包括模拟点击</li><li>菜单速度优化</li><li>更新了多线程下载可选资源，增量更新，补丁更新</li><li>9008重启失败直接改为跳过</li><li>增加了刷入固件包或超级恢复的功能</li><li>新增禁止快速编辑(选中)，防止进进程被阻塞</li><li>一键root，对于7.1机型增加多次判断root成功与否，避免误判</li><li>一键root，重新排版了一下提示</li><li>一键root，加了计时器</li></ul>
+    </div>
+    <div class="tl-entry reveal ">
+      <div class="tl-head"><span class="tl-ver">v1.3.5</span><span class="tl-date">2026-01-18</span></div>
+      <ul class="tl-list"><li>修复z10一键root，部分机型的活动分区为b，导致无法正常修改的问题。</li></ul>
+    </div>
+    <div class="tl-entry reveal ">
+      <div class="tl-head"><span class="tl-ver">v1.3.4</span><span class="tl-date">2026-01-17</span></div>
+      <ul class="tl-list"><li>z10一键root，正式可用[已测试]</li><li>增加beta版本</li><li>去除无用内容</li><li>优化菜单和更新补丁</li><li>修复部分机型新修补无法正常修补boot的问题</li></ul>
+    </div>
+    <div class="tl-entry reveal ">
+      <div class="tl-head"><span class="tl-ver">v1.3.3</span><span class="tl-date">2026-01-12</span></div>
+      <ul class="tl-list"><li>修复z9不兼容magisk29的问题</li><li>修复一键root-nd03</li><li>修复漏洞补丁一直报错的问题</li><li>优化断点续刷无法获取到端口号的问题</li><li>增加新菜单使用建议和提示</li></ul>
+    </div>
+    <div class="tl-entry reveal ">
+      <div class="tl-head"><span class="tl-ver">v1.3.2</span><span class="tl-date">2026-01-11</span></div>
+      <ul class="tl-list"><li>替换magisk修补工具(支持29)</li><li>z10进入qmmi修复</li><li>修复安装应用</li><li>刷入twrp更多支持z2Y,z7A,z5A,z5Q,z6</li><li>增加预装软件可以被跳过</li><li>修复新菜单部分功能闪退问题</li><li>修复新菜单环境变量传输不当问题</li><li>优化一键root</li><li>一键root适配z10机型[beta]</li><li>移除汉克米应用商店，更新弦应用商店，增加灵应用商店</li><li>暂时停用更新功能，改用打开官方链接更新。</li><li>增加鼠标可以双击打开某个功能</li><li>更新xtcpatch</li><li>优化带systemui的root流程</li></ul>
+    </div>
+    <div class="tl-entry reveal ">
+      <div class="tl-head"><span class="tl-ver">v1.3.1</span><span class="tl-date">2026-01-06</span></div>
+      <ul class="tl-list"><li>9008引导后增加等待2秒，避免出现问题</li><li>修改错误输出</li><li>增加引导超时时间10秒，超时后默认为已经引导，直接跳过命令。</li><li>修复参数传递没有'='报错的问题。</li></ul>
+    </div>
+    <div class="tl-entry reveal ">
+      <div class="tl-head"><span class="tl-ver">v1.3.0</span><span class="tl-date">2026-01-05</span></div>
+      <ul class="tl-list"><li>修复部分bug</li><li>修复编码与换行符问题</li><li>修复日期带有符号的问题</li></ul>
+    </div>
+    <div class="tl-entry reveal ">
+      <div class="tl-head"><span class="tl-ver">v1.2.9</span><span class="tl-date">2026-01-02</span></div>
+      <ul class="tl-list"><li>修复“断点续刷”后无法修补boot的问题</li><li>提升临时环境变量优先级</li><li>添加9008引导与刷入时错误拦截和错误回显</li><li>优化局部变量的代码</li><li>在进入qmmi功能中加入z10</li><li>优化与修复一键root</li><li>增加备份相册</li><li>增加7.1.1 and 4.4.4安装xp框架</li><li>增加更多安装应用方式</li><li>新增/更新8.1机型Root后优化[原生修复]</li><li>修复自动激活systemplus</li><li>实装新版主菜单，使用时遇到问题请反馈</li><li>编译时添加g++编译参数-O3，改用Nuitka编译Python部分并启用lto优化取代PyInstaller</li><li>logo改为rust-lolcat输出，渐变更加美观</li><li>修复了双击运行弹窗乱码的问题</li></ul>
+    </div>
+    <div class="tl-entry reveal ">
+      <div class="tl-head"><span class="tl-ver">v1.2.7</span><span class="tl-date">2025-12-21</span></div>
+      <ul class="tl-list"><li>修复“断点续刷”跳转问题</li><li>修复一键root过程中安装应用时可能重启问题</li><li>添加安装模块后删除掉临时文件</li><li>更新xtc patch</li><li>修复不能正常跳转解除123云盘安装限制</li><li>增加如同批量安装apk那样批量安装magisk模块</li><li>增加投屏控制菜单包含18个可选项</li><li>优化自动激活，防止息屏问题</li><li>修复检查是否有systemUI的问题</li><li>修复卸载应用失败，还提示成功的问题</li><li>增加root后优化(可选)</li><li>工具箱UI已在计划中</li></ul>
+    </div>
+    <div class="tl-entry reveal ">
+      <div class="tl-head"><span class="tl-ver">v1.2.6</span><span class="tl-date">2025-12-18</span></div>
+      <ul class="tl-list"><li>使一键root的更加自动化并修复部分回显信息</li><li>一键root添加了一个模块和一个应用</li><li>用c++重构双击运行，更好的兼容性以及响应速度</li><li>增加解锁123云盘功能，使大家能更好的下载文件</li><li>增加工具启动时路径是否包含空格判断</li><li>增加离线OTA兼容性判断</li><li>增加一键root中“断点续刷”功能</li><li>增加一键root中遇到错误时可以跳过安装应用</li><li>修复不管什么系统版本总是提示Windows 11的问题</li><li>高级重启，增加跳过引导</li><li>把修改的版本号改到最新版本，并附加修改utc等</li></ul>
+    </div>
+    <div class="tl-entry reveal ">
+      <div class="tl-head"><span class="tl-ver">v1.2.5</span><span class="tl-date">2025-12-11</span></div>
+      <ul class="tl-list"><li>修复与优化</li></ul>
+    </div>
+    <div class="tl-entry reveal ">
+      <div class="tl-head"><span class="tl-ver">v1.2.4</span><span class="tl-date">2025-12-10</span></div>
+      <ul class="tl-list"><li>修复与优化</li><li>删除hookpatch,并永远不会对xtcpatch做出更改</li></ul>
+    </div>
+    <div class="tl-entry reveal ">
+      <div class="tl-head"><span class="tl-ver">v1.2.3</span><span class="tl-date">2025-12-10</span></div>
+      <ul class="tl-list"><li>紧急修复子菜单六</li></ul>
+    </div>
+    <div class="tl-entry reveal ">
+      <div class="tl-head"><span class="tl-ver">v1.2.2</span><span class="tl-date">2025-12-09</span></div>
+      <ul class="tl-list"><li>新增HookPatch模块用来代替xtcpatch</li><li>优化兼容性问题，修复因为环境变量导致的闪退</li><li>新增扩展接入主菜单接口</li><li>新增扩展接入卸载接口</li></ul>
+    </div>
+    <div class="tl-entry reveal ">
+      <div class="tl-head"><span class="tl-ver">v1.2.1</span><span class="tl-date">2025-12-06</span></div>
+      <ul class="tl-list"><li>修复更新</li></ul>
+    </div>
+    <div class="tl-entry reveal ">
+      <div class="tl-head"><span class="tl-ver">v1.2.0</span><span class="tl-date">2025-12-05</span></div>
+      <ul class="tl-list"><li>安卓7.1设备root修复与优化</li><li>修复[低版本]进入QMMI</li><li>修复[低版本]高级重启-正常重启[EDL分支]</li><li>修复所有9008状态下重启至系统有概率出现端口占用的问题</li><li>修复安装模块功能乱码的问题</li><li>修复安装模块功能不支持低版本的问题</li><li>更新初始化工具箱时可以被跳过</li><li>修复更新日志以及初始化上个版本忘记放到工具箱里了</li></ul>
+    </div>
+    <div class="tl-entry reveal ">
+      <div class="tl-head"><span class="tl-ver">v1.1.2</span><span class="tl-date">2025-12-03</span></div>
+      <ul class="tl-list"><li>修复已知问题</li><li>优化安装应用功能</li><li>优化root回显</li><li>优化更新功能</li></ul>
+    </div>
+    <div class="tl-entry reveal ">
+      <div class="tl-head"><span class="tl-ver">v1.1.1</span><span class="tl-date">2025-12-01</span></div>
+      <ul class="tl-list"><li>修复UAC权限提升</li><li>优化错误处理</li><li>优化root逻辑</li><li>添加安装扩展的功能</li></ul>
+    </div>
+    <div class="tl-entry reveal ">
+      <div class="tl-head"><span class="tl-ver">v1.1.0</span><span class="tl-date">2025-11-30</span></div>
+      <ul class="tl-list"><li>修复已知问题</li></ul>
+    </div>
+    <div class="tl-entry reveal ">
+      <div class="tl-head"><span class="tl-ver">v1.0.0</span><span class="tl-date">2025-11-23</span></div>
+      <ul class="tl-list"><li>脚本基础构建</li><li>继承若干工具箱功能</li><li>制作官网</li><li>优化与修复已知问题</li><li>添加若干功能[共计33个]</li></ul>
+    </div></div>
+      </div>
+    </section>
+
+    <!-- ===== ABOUT ===== -->
+    <section class="section" id="about">
+      <div class="container">
+        <div class="pg-head reveal">
+          <h1>
+            <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false" width="1em" height="1em" class="svg-icon material-icons-round" data-icon="groups" data-icon-done="1"><path d="M12 12.75c1.63 0 3.07.39 4.24.9 1.08.48 1.76 1.56 1.76 2.73V18H6v-1.61c0-1.18.68-2.26 1.76-2.73 1.17-.52 2.61-.91 4.24-.91zM4 13c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm1.13 1.1c-.37-.06-.74-.1-1.13-.1-.99 0-1.93.21-2.78.58C.48 14.9 0 15.62 0 16.43V18h4.5v-1.61c0-.83.23-1.61.63-2.29zM20 13c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm4 3.43c0-.81-.48-1.53-1.22-1.85A6.95 6.95 0 0 0 20 14c-.39 0-.76.04-1.13.1.4.68.63 1.46.63 2.29V18H24v-1.57zM12 6c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3z"></path></svg>
+            <span data-i18n="about.title">团队</span>
+          </h1>
+          <p data-i18n="about.subtitle">开发、测试、运维、合作</p>
+        </div>
+
+        <!-- Team Grid (mirrors live site) -->
+        <div class="team-grid" id="teamGrid">
+      <article class="team-card reveal spot-hover">
+        <div class="spotlight"></div>
+        <div class="tm-inner">
+          <img class="tm-avatar" src="./AllToolBox — 专为XTC打造的ADB工具箱_files/快乐小公爵236.png" alt="快乐小公爵236" loading="lazy" onerror="this.replaceWith(Object.assign(document.createElement('div'),{className:'tm-avatar tm-fallback',style:'background:linear-gradient(135deg, #58A3FF, #0876FF)',textContent:'快'}))">
+          <div class="tm-meta">
+            <h3 class="tm-name">快乐小公爵236</h3>
+            <p class="tm-role">官方版本开发者 / 主要开发者</p>
+          </div>
+        </div>
+      </article>
+      <article class="team-card reveal spot-hover">
+        <div class="spotlight"></div>
+        <div class="tm-inner">
+          <img class="tm-avatar" src="./AllToolBox — 专为XTC打造的ADB工具箱_files/伍潵.jpg" alt="伍潵" loading="lazy" onerror="this.replaceWith(Object.assign(document.createElement('div'),{className:'tm-avatar tm-fallback',style:'background:linear-gradient(135deg, #A89CFF, #7565EF)',textContent:'伍'}))">
+          <div class="tm-meta">
+            <h3 class="tm-name">伍潵</h3>
+            <p class="tm-role">Super Pro版本开发者 / 主要开发者</p>
+          </div>
+        </div>
+      </article>
+      <article class="team-card reveal spot-hover">
+        <div class="spotlight"></div>
+        <div class="tm-inner">
+          <img class="tm-avatar" src="./AllToolBox — 专为XTC打造的ADB工具箱_files/🍀.jpg" alt="🍀" loading="lazy" onerror="this.replaceWith(Object.assign(document.createElement('div'),{className:'tm-avatar tm-fallback',style:'background:linear-gradient(135deg, #5FD6E9, #13A6BB)',textContent:'🍀'}))">
+          <div class="tm-meta">
+            <h3 class="tm-name">🍀</h3>
+            <p class="tm-role">Gui版本开发者 / 网页开发者</p>
+          </div>
+        </div>
+      </article>
+      <article class="team-card reveal spot-hover">
+        <div class="spotlight"></div>
+        <div class="tm-inner">
+          <img class="tm-avatar" src="./AllToolBox — 专为XTC打造的ADB工具箱_files/小白人QFZM.png" alt="小白人QFZM" loading="lazy" onerror="this.replaceWith(Object.assign(document.createElement('div'),{className:'tm-avatar tm-fallback',style:'background:linear-gradient(135deg, #67D591, #15834A)',textContent:'小'}))">
+          <div class="tm-meta">
+            <h3 class="tm-name">小白人QFZM</h3>
+            <p class="tm-role">开发者</p>
+          </div>
+        </div>
+      </article>
+      <article class="team-card reveal spot-hover">
+        <div class="spotlight"></div>
+        <div class="tm-inner">
+          <img class="tm-avatar" src="./AllToolBox — 专为XTC打造的ADB工具箱_files/A高鸭邵Xinyapro.png" alt="A高鸭邵Xinyapro" loading="lazy" onerror="this.replaceWith(Object.assign(document.createElement('div'),{className:'tm-avatar tm-fallback',style:'background:linear-gradient(135deg, #58A3FF, #0876FF)',textContent:'A'}))">
+          <div class="tm-meta">
+            <h3 class="tm-name">A高鸭邵Xinyapro</h3>
+            <p class="tm-role">前端开发者 / 后端开发者 / 芯云工作室</p>
+          </div>
+        </div>
+      </article>
+      <article class="team-card reveal spot-hover">
+        <div class="spotlight"></div>
+        <div class="tm-inner">
+          <img class="tm-avatar" src="./AllToolBox — 专为XTC打造的ADB工具箱_files/阿哈.jpg" alt="阿哈" loading="lazy" onerror="this.replaceWith(Object.assign(document.createElement('div'),{className:'tm-avatar tm-fallback',style:'background:linear-gradient(135deg, #A89CFF, #7565EF)',textContent:'阿'}))">
+          <div class="tm-meta">
+            <h3 class="tm-name">阿哈</h3>
+            <p class="tm-role">开发者</p>
+          </div>
+        </div>
+      </article>
+      <article class="team-card reveal spot-hover">
+        <div class="spotlight"></div>
+        <div class="tm-inner">
+          <img class="tm-avatar" src="./AllToolBox — 专为XTC打造的ADB工具箱_files/hszlk.jpg" alt="hszlk" loading="lazy" onerror="this.replaceWith(Object.assign(document.createElement('div'),{className:'tm-avatar tm-fallback',style:'background:linear-gradient(135deg, #5FD6E9, #13A6BB)',textContent:'H'}))">
+          <div class="tm-meta">
+            <h3 class="tm-name">hszlk</h3>
+            <p class="tm-role">开发者</p>
+          </div>
+        </div>
+      </article>
+      <article class="team-card reveal spot-hover">
+        <div class="spotlight"></div>
+        <div class="tm-inner">
+          <img class="tm-avatar" src="./AllToolBox — 专为XTC打造的ADB工具箱_files/雨辰.jpg" alt="雨辰" loading="lazy" onerror="this.replaceWith(Object.assign(document.createElement('div'),{className:'tm-avatar tm-fallback',style:'background:linear-gradient(135deg, #67D591, #15834A)',textContent:'雨'}))">
+          <div class="tm-meta">
+            <h3 class="tm-name">雨辰</h3>
+            <p class="tm-role">开发者</p>
+          </div>
+        </div>
+      </article>
+      <article class="team-card reveal spot-hover">
+        <div class="spotlight"></div>
+        <div class="tm-inner">
+          <img class="tm-avatar" src="./AllToolBox — 专为XTC打造的ADB工具箱_files/纯黑.png" alt="纯黑" loading="lazy" onerror="this.replaceWith(Object.assign(document.createElement('div'),{className:'tm-avatar tm-fallback',style:'background:linear-gradient(135deg, #58A3FF, #0876FF)',textContent:'纯'}))">
+          <div class="tm-meta">
+            <h3 class="tm-name">纯黑</h3>
+            <p class="tm-role">测试人员</p>
+          </div>
+        </div>
+      </article>
+      <article class="team-card reveal spot-hover">
+        <div class="spotlight"></div>
+        <div class="tm-inner">
+          <img class="tm-avatar" src="./AllToolBox — 专为XTC打造的ADB工具箱_files/help.png" alt="help" loading="lazy" onerror="this.replaceWith(Object.assign(document.createElement('div'),{className:'tm-avatar tm-fallback',style:'background:linear-gradient(135deg, #A89CFF, #7565EF)',textContent:'H'}))">
+          <div class="tm-meta">
+            <h3 class="tm-name">help</h3>
+            <p class="tm-role">测试人员</p>
+          </div>
+        </div>
+      </article>
+      <article class="team-card reveal spot-hover">
+        <div class="spotlight"></div>
+        <div class="tm-inner">
+          <img class="tm-avatar" src="./AllToolBox — 专为XTC打造的ADB工具箱_files/LCX.png" alt="LCX" loading="lazy" onerror="this.replaceWith(Object.assign(document.createElement('div'),{className:'tm-avatar tm-fallback',style:'background:linear-gradient(135deg, #5FD6E9, #13A6BB)',textContent:'L'}))">
+          <div class="tm-meta">
+            <h3 class="tm-name">LCX</h3>
+            <p class="tm-role">运维</p>
+          </div>
+        </div>
+      </article>
+      <article class="team-card reveal spot-hover">
+        <div class="spotlight"></div>
+        <div class="tm-inner">
+          <img class="tm-avatar" src="./AllToolBox — 专为XTC打造的ADB工具箱_files/芯云工作室.jpg" alt="芯云工作室" loading="lazy" onerror="this.replaceWith(Object.assign(document.createElement('div'),{className:'tm-avatar tm-fallback',style:'background:linear-gradient(135deg, #67D591, #15834A)',textContent:'芯'}))">
+          <div class="tm-meta">
+            <h3 class="tm-name">芯云工作室</h3>
+            <p class="tm-role">合作商</p>
+          </div>
+        </div>
+      </article>
+      <article class="team-card reveal spot-hover">
+        <div class="spotlight"></div>
+        <div class="tm-inner">
+          <img class="tm-avatar" src="./AllToolBox — 专为XTC打造的ADB工具箱_files/NEW CRACK.jpg" alt="NEW CRACK" loading="lazy" onerror="this.replaceWith(Object.assign(document.createElement('div'),{className:'tm-avatar tm-fallback',style:'background:linear-gradient(135deg, #58A3FF, #0876FF)',textContent:'N'}))">
+          <div class="tm-meta">
+            <h3 class="tm-name">NEW CRACK</h3>
+            <p class="tm-role">开发团队</p>
+          </div>
+        </div>
+      </article>
+      <article class="team-card reveal spot-hover">
+        <div class="spotlight"></div>
+        <div class="tm-inner">
+          <img class="tm-avatar" src="./AllToolBox — 专为XTC打造的ADB工具箱_files/hhy.jpg" alt="hhy8399" loading="lazy" onerror="this.replaceWith(Object.assign(document.createElement('div'),{className:'tm-avatar tm-fallback',style:'background:linear-gradient(135deg, #A89CFF, #7565EF)',textContent:'H'}))">
+          <div class="tm-meta">
+            <h3 class="tm-name">hhy8399</h3>
+            <p class="tm-role">开发者</p>
+          </div>
+        </div>
+      </article>
+      <article class="team-card reveal spot-hover">
+        <div class="spotlight"></div>
+        <div class="tm-inner">
+          <img class="tm-avatar" src="./AllToolBox — 专为XTC打造的ADB工具箱_files/xingtan.jpg" alt="星碳" loading="lazy" onerror="this.replaceWith(Object.assign(document.createElement('div'),{className:'tm-avatar tm-fallback',style:'background:linear-gradient(135deg, #5FD6E9, #13A6BB)',textContent:'星'}))">
+          <div class="tm-meta">
+            <h3 class="tm-name">星碳</h3>
+            <p class="tm-role">开发者</p>
+          </div>
+        </div>
+      </article>
+      <article class="team-card reveal spot-hover">
+        <div class="spotlight"></div>
+        <div class="tm-inner">
+          <img class="tm-avatar" src="./AllToolBox — 专为XTC打造的ADB工具箱_files/xiaozhu.jpg" alt="小猪" loading="lazy" onerror="this.replaceWith(Object.assign(document.createElement('div'),{className:'tm-avatar tm-fallback',style:'background:linear-gradient(135deg, #67D591, #15834A)',textContent:'小'}))">
+          <div class="tm-meta">
+            <h3 class="tm-name">小猪</h3>
+            <p class="tm-role">开发者</p>
+          </div>
+        </div>
+      </article>
+      <article class="team-card reveal spot-hover">
+        <div class="spotlight"></div>
+        <div class="tm-inner">
+          <img class="tm-avatar" src="./AllToolBox — 专为XTC打造的ADB工具箱_files/神.jpg" alt="神" loading="lazy" onerror="this.replaceWith(Object.assign(document.createElement('div'),{className:'tm-avatar tm-fallback',style:'background:linear-gradient(135deg, #58A3FF, #0876FF)',textContent:'神'}))">
+          <div class="tm-meta">
+            <h3 class="tm-name">神</h3>
+            <p class="tm-role">开发者</p>
+          </div>
+        </div>
+      </article></div>
+
+        <!-- Project meta -->
+        <h2 class="sec-title reveal" style="margin-top:8px">
+          <span class="title-bar"></span>
+          <span data-i18n="about.projectInfo">项目信息</span>
+        </h2>
+        <div class="about-bento">
+          <div class="about-card reveal spot-hover">
+            <div class="spotlight"></div>
+            <div class="card-inner">
+              <div class="card-header">
+                <span class="material-icons-round ico-gradient">code</span>
+                <h3 data-i18n="about.webDev">官网开发</h3>
+              </div>
+                Zxi2233 &amp; Claude Fable 5
+            </div>
+          </div>
+
+          <div class="about-card reveal spot-hover">
+            <div class="spotlight"></div>
+            <div class="card-inner">
+              <div class="card-header">
+                <span class="material-icons-round ico-gradient">verified</span>
+                <h3 data-i18n="about.currentVersion">当前版本</h3>
+              </div>
+              <div class="ver-row">
+                <span class="ver-num glow-text" id="aboutVer">V 1.4.6</span>
+                <span class="ver-ch">stable</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="about-card reveal spot-hover">
+            <div class="spotlight"></div>
+            <div class="card-inner">
+              <div class="card-header">
+                <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false" width="1em" height="1em" class="svg-icon material-icons-round" data-icon="group" data-icon-done="1"><path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5s-3 1.34-3 3 1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"></path></svg>
+                <h3 data-i18n="about.qqGroup">QQ 交流群</h3>
+              </div>
+              <a href="https://qm.qq.com/q/Y1Ix4uSE0K" target="_blank" class="ext-link qq-link">
+                907491503
+                <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false" width="1em" height="1em" class="svg-icon material-icons-round" data-icon="open_in_new" data-icon-done="1"><path d="M19 19H5V5h7V3H5c-1.11 0-2 .9-2 2v14c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2v-7h-2v7zM14 3v2h3.59l-9.83 9.83 1.41 1.41L19 6.41V10h2V3h-7z"></path></svg>
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <footer class="footer">
+    <span>© 2025–2026 AllToolBox</span>
+    <span class="dot">·</span>
+    <span data-i18n="footer.powered">Powered by AllToolBox wear</span>
+  </footer>
+
+  <script src="./AllToolBox — 专为XTC打造的ADB工具箱_files/app.js.下载"></script>
+
+
+</body></html>
