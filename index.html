@@ -1,145 +1,228 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>LOUDLY | 个人主页</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-        }
-
-        body {
-            min-height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 20px;
-            color: #fff;
-            position: relative;
-            overflow: hidden;
-        }
-
-        /* 随机风景画背景 */
-        body::before {
-            content: "";
-            position: fixed;
-            inset: 0;
-            background-image: var(--bg-image);
-            background-size: cover;
-            background-position: center;
-            background-repeat: no-repeat;
-            z-index: -2;
-        }
-
-        /* 暗色遮罩，保证文字可读 */
-        body::after {
-            content: "";
-            position: fixed;
-            inset: 0;
-            background: rgba(0, 0, 0, 0.45);
-            z-index: -1;
-        }
-
-        .card {
-            text-align: center;
-            padding: 40px 30px;
-            border-radius: 20px;
-            background: rgba(255, 255, 255, 0.12);
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
-            border: 1px solid rgba(255, 255, 255, 0.25);
-            max-width: 420px;
-            width: 100%;
-            box-shadow: 0 12px 32px rgba(0, 0, 0, 0.35);
-        }
-
-        .name {
-            font-size: 44px;
-            font-weight: 800;
-            letter-spacing: 6px;
-            color: #ffffff;
-            margin-bottom: 14px;
-        }
-
-        .desc {
-            color: #eaeaea;
-            font-size: 16px;
-            margin-bottom: 32px;
-            letter-spacing: 2px;
-        }
-
-        .link-item {
-            display: block;
-            text-decoration: none;
-            color: #fff;
-            border: 1px solid rgba(255, 255, 255, 0.35);
-            border-radius: 12px;
-            padding: 14px;
-            margin: 14px 0;
-            background: rgba(255, 255, 255, 0.08);
-            transition: all 0.3s ease;
-            font-weight: 500;
-        }
-
-        .link-item:hover {
-            background: rgba(255, 255, 255, 0.22);
-            border-color: rgba(255, 255, 255, 0.6);
-            transform: translateY(-2px);
-        }
-
-        footer {
-            position: fixed;
-            bottom: 16px;
-            width: 100%;
-            text-align: center;
-            color: #cfcfcf;
-            font-size: 13px;
-            letter-spacing: 1px;
-        }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>猜数字游戏</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    padding: 20px;
+  }
+  .card {
+    background: rgba(255, 255, 255, 0.95);
+    border-radius: 24px;
+    padding: 48px 40px;
+    max-width: 440px;
+    width: 100%;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+    text-align: center;
+  }
+  h1 {
+    color: #4a3f8b;
+    font-size: 28px;
+    margin-bottom: 8px;
+  }
+  .subtitle {
+    color: #888;
+    font-size: 14px;
+    margin-bottom: 28px;
+  }
+  .range-hint {
+    background: #f0edff;
+    color: #6c5ce7;
+    padding: 10px 20px;
+    border-radius: 12px;
+    font-size: 15px;
+    font-weight: 600;
+    margin-bottom: 24px;
+    display: inline-block;
+  }
+  .input-row {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 20px;
+  }
+  input[type="number"] {
+    flex: 1;
+    padding: 14px 16px;
+    border: 2px solid #e0dcf5;
+    border-radius: 12px;
+    font-size: 18px;
+    text-align: center;
+    outline: none;
+    transition: border-color 0.2s;
+  }
+  input[type="number"]:focus {
+    border-color: #6c5ce7;
+  }
+  button {
+    padding: 14px 24px;
+    border: none;
+    border-radius: 12px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: transform 0.15s, box-shadow 0.15s;
+  }
+  button:hover { transform: translateY(-2px); }
+  button:active { transform: translateY(0); }
+  .btn-guess {
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    color: white;
+    box-shadow: 0 4px 14px rgba(102, 126, 234, 0.4);
+  }
+  .btn-reset {
+    background: #f0edff;
+    color: #6c5ce7;
+    margin-top: 8px;
+  }
+  .feedback {
+    min-height: 56px;
+    font-size: 20px;
+    font-weight: 700;
+    margin: 16px 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 12px;
+    transition: all 0.3s;
+  }
+  .feedback.high { color: #e17055; background: #fff0ec; }
+  .feedback.low { color: #0984e3; background: #e8f4fd; }
+  .feedback.correct { color: #00b894; background: #e6fff9; }
+  .feedback.invalid { color: #d63031; background: #ffeaea; }
+  .stats {
+    display: flex;
+    justify-content: space-around;
+    margin-top: 20px;
+    padding-top: 20px;
+    border-top: 1px solid #eee;
+  }
+  .stat { text-align: center; }
+  .stat .label { font-size: 12px; color: #999; margin-bottom: 4px; }
+  .stat .value { font-size: 22px; font-weight: 700; color: #4a3f8b; }
+  .history {
+    margin-top: 16px;
+    font-size: 13px;
+    color: #999;
+    min-height: 20px;
+  }
+  .history span {
+    display: inline-block;
+    background: #f5f5f5;
+    padding: 3px 10px;
+    border-radius: 8px;
+    margin: 3px;
+  }
+</style>
 </head>
 <body>
-
-<div class="card">
-    <div class="name">LOUDLY</div>
-    <p class="desc" id="randomText"></p>
-
-    <a class="link-item" href="#">我的作品</a>
-    <a class="link-item" href="#">社交账号</a>
-    <a class="link-item" href="#">联系我</a>
-</div>
-
-<footer>©2022-2026 LOUDLY co.Ltd</footer>
+  <div class="card">
+    <h1>🎯 猜数字游戏</h1>
+    <p class="subtitle">我想好了一个 1 到 100 之间的数字，快来猜猜看！</p>
+    <div class="range-hint" id="rangeHint">范围：1 ~ 100</div>
+    <div class="input-row">
+      <input type="number" id="guessInput" placeholder="输入数字" min="1" max="100" autofocus>
+      <button class="btn-guess" id="guessBtn">猜！</button>
+    </div>
+    <div class="feedback" id="feedback">输入你的第一个猜测吧～</div>
+    <div class="history" id="history"></div>
+    <div class="stats">
+      <div class="stat">
+        <div class="label">已猜次数</div>
+        <div class="value" id="attempts">0</div>
+      </div>
+      <div class="stat">
+        <div class="label">最佳纪录</div>
+        <div class="value" id="best">–</div>
+      </div>
+    </div>
+    <button class="btn-reset" id="resetBtn">🔄 重新开始</button>
+  </div>
 
 <script>
-    // 风景画背景图组，可自行替换图片链接
-    const landscapes = [
-        "https://picsum.photos/id/1018/1920/1080",
-        "https://picsum.photos/id/1015/1920/1080",
-        "https://picsum.photos/id/1019/1920/1080",
-        "https://picsum.photos/id/1016/1920/1080",
-        "https://picsum.photos/id/1021/1920/1080",
-        "https://picsum.photos/id/1039/1920/1080",
-        "https://picsum.photos/id/1043/1920/1080",
-        "https://picsum.photos/id/1044/1920/1080"
-    ];
+  let target, attempts, min, max, gameOver;
+  let bestRecord = localStorage.getItem('guessNumberBest') || null;
 
-    // 随机选背景
-    const randomBg = landscapes[Math.floor(Math.random() * landscapes.length)];
-    document.body.style.setProperty("--bg-image", `url(${randomBg})`);
+  const guessInput = document.getElementById('guessInput');
+  const guessBtn = document.getElementById('guessBtn');
+  const feedback = document.getElementById('feedback');
+  const attemptsEl = document.getElementById('attempts');
+  const bestEl = document.getElementById('best');
+  const rangeHint = document.getElementById('rangeHint');
+  const historyEl = document.getElementById('history');
+  const resetBtn = document.getElementById('resetBtn');
 
-    // 随机文字 二选一
-    const textList = [
-        "loudly co.Ltd 万岁！！！",
-        "昔人已乘黄鹤去，此地空余黄鹤楼"
-    ];
-    const randomIndex = Math.floor(Math.random() * textList.length);
-    document.getElementById("randomText").innerText = textList[randomIndex];
+  bestEl.textContent = bestRecord ? bestRecord : '–';
+
+  function init() {
+    target = Math.floor(Math.random() * 100) + 1;
+    attempts = 0;
+    min = 1;
+    max = 100;
+    gameOver = false;
+    feedback.textContent = '输入你的第一个猜测吧～';
+    feedback.className = 'feedback';
+    attemptsEl.textContent = '0';
+    rangeHint.textContent = '范围：1 ~ 100';
+    historyEl.innerHTML = '';
+    guessInput.value = '';
+    guessInput.disabled = false;
+    guessInput.focus();
+  }
+
+  function guess() {
+    if (gameOver) return;
+    const val = parseInt(guessInput.value);
+    if (isNaN(val) || val < 1 || val > 100) {
+      feedback.textContent = '⚠️ 请输入 1 到 100 之间的数字';
+      feedback.className = 'feedback invalid';
+      return;
+    }
+    attempts++;
+    attemptsEl.textContent = attempts;
+
+    // 记录历史
+    const tag = document.createElement('span');
+    tag.textContent = val;
+    historyEl.appendChild(tag);
+
+    if (val === target) {
+      feedback.textContent = `🎉 恭喜！用了 ${attempts} 次猜中了！`;
+      feedback.className = 'feedback correct';
+      gameOver = true;
+      guessInput.disabled = true;
+      if (!bestRecord || attempts < bestRecord) {
+        bestRecord = attempts;
+        localStorage.setItem('guessNumberBest', bestRecord);
+        bestEl.textContent = bestRecord;
+      }
+    } else if (val < target) {
+      feedback.textContent = '⬆️ 太小了！往大猜';
+      feedback.className = 'feedback low';
+      min = Math.max(min, val + 1);
+    } else {
+      feedback.textContent = '⬇️ 太大了！往小猜';
+      feedback.className = 'feedback high';
+      max = Math.min(max, val - 1);
+    }
+    rangeHint.textContent = `范围：${min} ~ ${max}`;
+    guessInput.value = '';
+    guessInput.focus();
+  }
+
+  guessBtn.addEventListener('click', guess);
+  guessInput.addEventListener('keydown', e => { if (e.key === 'Enter') guess(); });
+  resetBtn.addEventListener('click', init);
+
+  init();
 </script>
-
 </body>
 </html>
