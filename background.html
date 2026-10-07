@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LOUDLY | Contact</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: system-ui, sans-serif;
+        }
+
+        body {
+            color: #fff;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 32px;
+            padding: 20px;
+        }
+        /* 背景遮罩层 */
+        .mask {
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.65);
+            z-index: 0;
+        }
+
+        .bg {
+            position: fixed;
+            inset: 0;
+            z-index: -1;
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+        }
+
+        .container {
+            text-align: center;
+            z-index: 1;
+        }
+
+        h1 {
+            font-size: 2.4rem;
+            margin-bottom: 12px;
+        }
+
+        .sub {
+            color: #aaa;
+            margin-bottom: 40px;
+        }
+
+        .contact-item {
+            font-size: 1.2rem;
+            margin: 18px 0;
+            color: #ddd;
+        }
+
+            .contact-item a {
+                color: #63a4ff;
+                text-decoration: none;
+            }
+
+                .contact-item a:hover {
+                    text-decoration: underline;
+                }
+
+        .back-btn {
+            margin-top: 40px;
+            padding: 12px 28px;
+            background: #222;
+            border: 1px solid #444;
+            color: #fff;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1rem;
+        }
+
+            .back-btn:hover {
+                background: #333;
+            }
+    </style>
+</head>
+<body>
+    <div class="bg" id="bgImg"></div>
+    <div class="mask"></div>
+    <div class="container">
+        <h1>LOUDLY</h1>
+        <p class="sub">我的联系方式</p>
+
+        <div class="contact-item">邮箱：loudly0121@126.com或loudly0121@outlook.com</div>
+        <div class="contact-item">微信：loudly0121</div>
+        <div class="contact-item">GitHub：<a href="https://github.com/" target="_blank">github.com/loudly-0121</a></div>
+
+        <button class="back-btn" onclick="window.location.href='index.html'">返回主页</button>
+    </div>
+
+    <script>
+        // 和主页完全一致的图片列表
+        const bgList = [
+        "https://picsum.photos/id/1018/1920/1080",
+        "https://picsum.photos/id/1015/1920/1080",
+        "https://picsum.photos/id/1019/1920/1080",
+        "https://picsum.photos/id/1016/1920/1080",
+        "https://picsum.photos/id/1021/1920/1080",
+        "https://picsum.photos/id/1039/1920/1080",
+        "https://picsum.photos/id/1043/1920/1080",
+        "https://picsum.photos/id/1044/1920/1080"
+        ];
+        // 随机选一张背景
+        const randomBg = bgList[Math.floor(Math.random() * bgList.length)];
+        document.getElementById('bgImg').style.backgroundImage = `url(${randomBg})`;
+    </script>
+</body>
+</html>
