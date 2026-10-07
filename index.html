@@ -133,11 +133,14 @@
     const randomBg = landscapes[Math.floor(Math.random() * landscapes.length)];
     document.body.style.setProperty("--bg-image", `url(${randomBg})`);
 
-    // 随机文字 二选一
+    // 随机文字 多选一
     const textList = [
         "loudly co.Ltd 万岁！！！",
         "昔人已乘黄鹤去，此地空余黄鹤楼",
-        "人不可貌相，海水不可斗量"
+        "人不可貌相，海水不可斗量",
+        "读书百遍，其义自见",
+        "多一分坚持，就会少一分遗憾",
+        "书山有路勤为径，学海无涯苦作舟"
     ];
     const randomIndex = Math.floor(Math.random() * textList.length);
     document.getElementById("randomText").innerText = textList[randomIndex];
