@@ -137,14 +137,14 @@
     <p class="desc">My Works</p>
 
     <div class="works-grid">
-        <a href="#" class="work-item">
-            <h3>作品 01</h3>
-            <p>项目介绍文字</p>
+        <a href="mnecraft" class="work-item">
+            <h3>我的世界</h3>
+            <p>我的世界2D版</p>
         </a>
 
-        <a href="#" class="work-item">
-            <h3>作品 02</h3>
-            <p>项目介绍文字</p>
+        <a href="numberguess" class="work-item">
+            <h3>猜数</h3>
+            <p>猜数字小游戏</p>
         </a>
 
         <a href="#" class="work-item">
