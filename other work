@@ -137,9 +137,9 @@
     <p class="desc">My Works</p>
 
     <div class="works-grid">
-        <a href="#" class="work-item">
-            <h3>作品 01</h3>
-            <p>项目介绍文字</p>
+        <a href="other work-get file" class="work-item">
+            <h3>投稿</h3>
+            <p>投稿请点击👆</p>
         </a>
 
         <a href="#" class="work-item">
