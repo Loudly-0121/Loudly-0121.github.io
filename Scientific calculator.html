@@ -1,0 +1,475 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>科学计算器</title>
+<style>
+  :root{
+    --bg:#0f1216;
+    --panel:#1a1f26;
+    --panel-2:#222831;
+    --key:#2b323d;
+    --key-hover:#363f4c;
+    --key-active:#445060;
+    --op:#3d4a5c;
+    --fn:#33404f;
+    --ac:#5c3535;
+    --eq:#2f6db5;
+    --eq-hover:#3a7ecb;
+    --text:#f2f5f8;
+    --sub:#8b97a6;
+    --accent:#ffb454;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{
+    min-height:100vh;
+    display:flex;align-items:center;justify-content:center;
+    background:radial-gradient(1200px 800px at 30% 10%,#1c2530 0%,var(--bg) 60%);
+    font-family:"Segoe UI","Noto Sans SC",system-ui,-apple-system,sans-serif;
+    color:var(--text);
+    padding:16px;
+  }
+  .calc{
+    width:100%;max-width:420px;
+    background:var(--panel);
+    border:1px solid rgba(255,255,255,.06);
+    border-radius:24px;
+    padding:20px;
+    box-shadow:0 24px 60px rgba(0,0,0,.5);
+  }
+  .mode-bar{
+    display:flex;justify-content:space-between;align-items:center;
+    margin-bottom:12px;
+  }
+  .mode-bar .title{font-size:14px;color:var(--sub);letter-spacing:1px;}
+  .toggle{
+    display:flex;background:var(--panel-2);border-radius:10px;padding:3px;gap:3px;
+  }
+  .toggle button{
+    border:none;background:transparent;color:var(--sub);
+    font-size:12px;padding:5px 12px;border-radius:8px;cursor:pointer;
+    font-family:inherit;
+  }
+  .toggle button.on{background:var(--op);color:var(--text);}
+  .display{
+    background:var(--panel-2);
+    border-radius:16px;
+    padding:16px 18px;
+    margin-bottom:16px;
+    text-align:right;
+    overflow:hidden;
+  }
+  .display .history{
+    min-height:20px;font-size:14px;color:var(--sub);
+    white-space:nowrap;overflow-x:auto;scrollbar-width:none;
+  }
+  .display .history::-webkit-scrollbar{display:none;}
+  .display .current{
+    margin-top:6px;font-size:34px;font-weight:600;
+    white-space:nowrap;overflow-x:auto;scrollbar-width:none;
+    word-break:break-all;
+  }
+  .display .current::-webkit-scrollbar{display:none;}
+  .display .current.err{color:#ff7a7a;font-size:24px;}
+  .keys{
+    display:grid;
+    grid-template-columns:repeat(5,1fr);
+    gap:10px;
+  }
+  button.key{
+    border:none;border-radius:14px;
+    background:var(--key);color:var(--text);
+    font-size:19px;font-weight:500;
+    padding:16px 0;cursor:pointer;
+    font-family:inherit;
+    transition:background .12s,transform .06s;
+    user-select:none;
+  }
+  button.key:hover{background:var(--key-hover);}
+  button.key:active{background:var(--key-active);transform:scale(.96);}
+  button.key.fn{background:var(--fn);font-size:16px;}
+  button.key.op{background:var(--op);font-size:20px;color:var(--accent);}
+  button.key.ac{background:var(--ac);color:#ff9d9d;}
+  button.key.eq{background:var(--eq);grid-row:span 2;font-size:22px;}
+  button.key.eq:hover{background:var(--eq-hover);}
+  button.key.zero{grid-column:span 2;}
+  .hint{margin-top:14px;text-align:center;font-size:12px;color:var(--sub);}
+</style>
+</head>
+<body>
+  <div class="calc">
+    <div class="mode-bar">
+      <span class="title">SCIENTIFIC</span>
+      <div class="toggle">
+        <button id="deg" class="on" data-mode="deg">DEG</button>
+        <button id="rad" data-mode="rad">RAD</button>
+      </div>
+    </div>
+    <div class="display">
+      <div class="history" id="history">&nbsp;</div>
+      <div class="current" id="current">0</div>
+    </div>
+    <div class="keys" id="keys">
+      <!-- 科学功能行 -->
+      <button class="key fn" data-func="sin">sin</button>
+      <button class="key fn" data-func="cos">cos</button>
+      <button class="key fn" data-func="tan">tan</button>
+      <button class="key fn" data-func="ln">ln</button>
+      <button class="key fn" data-func="log">log</button>
+
+      <button class="key fn" data-func="asin">sin⁻¹</button>
+      <button class="key fn" data-func="acos">cos⁻¹</button>
+      <button class="key fn" data-func="atan">tan⁻¹</button>
+      <button class="key fn" data-func="sqrt">√</button>
+      <button class="key fn" data-func="pow2">x²</button>
+
+      <button class="key fn" data-const="π">π</button>
+      <button class="key fn" data-const="e">e</button>
+      <button class="key fn" data-func="fact">n!</button>
+      <button class="key fn" data-func="inv">1/x</button>
+      <button class="key fn" data-func="pow">xʸ</button>
+
+      <button class="key fn" data-action="(">(</button>
+      <button class="key fn" data-action=")">)</button>
+      <button class="key fn" data-action="back">⌫</button>
+      <button class="key ac" data-action="ac">AC</button>
+      <button class="key op" data-action="%">%</button>
+
+      <!-- 数字与四则 -->
+      <button class="key" data-digit="7">7</button>
+      <button class="key" data-digit="8">8</button>
+      <button class="key" data-digit="9">9</button>
+      <button class="key op" data-op="/">÷</button>
+      <button class="key fn" data-action="neg">±</button>
+
+      <button class="key" data-digit="4">4</button>
+      <button class="key" data-digit="5">5</button>
+      <button class="key" data-digit="6">6</button>
+      <button class="key op" data-op="*">×</button>
+      <button class="key fn" data-action="exp">Exp</button>
+
+      <button class="key" data-digit="1">1</button>
+      <button class="key" data-digit="2">2</button>
+      <button class="key" data-digit="3">3</button>
+      <button class="key op" data-op="-">−</button>
+      <button class="key fn" data-action="mod">mod</button>
+
+      <button class="key zero" data-digit="0">0</button>
+      <button class="key" data-action=".">.</button>
+      <button class="key op" data-op="+">+</button>
+      <button class="key eq" data-action="eq">=</button>
+    </div>
+    <div class="hint">支持键盘输入 · Enter 计算 · Esc 清空 · Backspace 删除</div>
+  </div>
+
+<script>
+(function(){
+  "use strict";
+
+  const currentEl = document.getElementById("current");
+  const historyEl = document.getElementById("history");
+  const degBtn = document.getElementById("deg");
+  const radBtn = document.getElementById("rad");
+
+  let expr = "";          // 显示用表达式
+  let mode = "deg";       // deg | rad
+  let justEvaluated = false;
+
+  const FUNCS = ["sin","cos","tan","asin","acos","atan","ln","log","sqrt"];
+
+  // ---------- 工具 ----------
+  function factorial(n){
+    if(n < 0 || !Number.isInteger(n)) throw new Error("阶乘需为非负整数");
+    if(n > 170) throw new Error("溢出");
+    let r = 1;
+    for(let i=2;i<=n;i++) r*=i;
+    return r;
+  }
+
+  // 角度/弧度换算
+  function toRad(x){ return mode === "deg" ? x*Math.PI/180 : x; }
+  function fromRad(x){ return mode === "deg" ? x*180/Math.PI : x; }
+
+  // ---------- 词法分析 ----------
+  function tokenize(s){
+    const tokens = [];
+    let i = 0;
+    while(i < s.length){
+      const c = s[i];
+      if(/\s/.test(c)){ i++; continue; }
+      if(/[0-9.]/.test(c)){
+        let j = i;
+        while(j < s.length && /[0-9.]/.test(s[j])) j++;
+        tokens.push({type:"num", value:s.slice(i,j)});
+        i = j; continue;
+      }
+      if(/[a-zA-Z]/.test(c)){
+        let j = i;
+        while(j < s.length && /[a-zA-Z]/.test(s[j])) j++;
+        const word = s.slice(i,j);
+        if(word === "mod") tokens.push({type:"op", value:"mod"});
+        else tokens.push({type:"name", value:word});
+        i = j; continue;
+      }
+      if("+-*/^%()".includes(c)){ tokens.push({type:"op", value:c}); i++; continue; }
+      if(c === "!"){ tokens.push({type:"fact", value:"!"}); i++; continue; }
+      throw new Error("无法识别: " + c);
+    }
+    return tokens;
+  }
+
+  // ---------- 递归下降求值 ----------
+  function parse(tokens){
+    let pos = 0;
+    function peek(){ return tokens[pos]; }
+    function next(){ return tokens[pos++]; }
+
+    function parseExpr(){
+      let v = parseTerm();
+      while(peek() && (peek().value === "+" || peek().value === "-")){
+        const op = next().value;
+        const r = parseTerm();
+        v = op === "+" ? v + r : v - r;
+      }
+      return v;
+    }
+    function parseTerm(){
+      let v = parseFactor();
+      while(peek() && ["*","/","mod"].includes(peek().value)){
+        const op = next().value;
+        const r = parseFactor();
+        if(op === "*") v *= r;
+        else if(op === "/"){ if(r === 0) throw new Error("除数为 0"); v /= r; }
+        else { v %= r; }
+      }
+      return v;
+    }
+    function parseFactor(){
+      const base = parseUnary();
+      if(peek() && peek().value === "^"){
+        next();
+        const exp = parseFactor(); // 右结合
+        return Math.pow(base, exp);
+      }
+      return base;
+    }
+    function parseUnary(){
+      if(peek() && peek().value === "-"){ next(); return -parseUnary(); }
+      if(peek() && peek().value === "+"){ next(); return parseUnary(); }
+      return parsePostfix();
+    }
+    function parsePostfix(){
+      let v = parsePrimary();
+      while(peek() && (peek().type === "fact" || peek().value === "%")){
+        const t = next();
+        if(t.type === "fact") v = factorial(v);
+        else v = v / 100;
+      }
+      return v;
+    }
+    function parsePrimary(){
+      const t = peek();
+      if(!t) throw new Error("表达式不完整");
+      if(t.type === "num"){
+        next();
+        const n = parseFloat(t.value);
+        if(isNaN(n)) throw new Error("数字无效");
+        return n;
+      }
+      if(t.type === "name"){
+        next();
+        const name = t.value;
+        if(name === "π" || name === "pi") return Math.PI;
+        if(name === "e") return Math.E;
+        if(FUNCS.includes(name)){
+          if(!peek() || peek().value !== "(") throw new Error(name + " 缺少括号");
+          next(); // 左括号
+          const arg = parseExpr();
+          if(!peek() || peek().value !== ")") throw new Error("缺少右括号");
+          next();
+          return applyFunc(name, arg);
+        }
+        throw new Error("未知名称: " + name);
+      }
+      if(t.value === "("){
+        next();
+        const v = parseExpr();
+        if(!peek() || peek().value !== ")") throw new Error("缺少右括号");
+        next();
+        return v;
+      }
+      throw new Error("表达式错误");
+    }
+
+    function applyFunc(name, x){
+      switch(name){
+        case "sin": return Math.sin(toRad(x));
+        case "cos": return Math.cos(toRad(x));
+        case "tan": {
+          const r = Math.cos(toRad(x));
+          if(Math.abs(r) < 1e-15) throw new Error("tan 无定义");
+          return Math.tan(toRad(x));
+        }
+        case "asin": return fromRad(Math.asin(clamp(x,-1,1)));
+        case "acos": return fromRad(Math.acos(clamp(x,-1,1)));
+        case "atan": return fromRad(Math.atan(x));
+        case "ln":   { if(x <= 0) throw new Error("ln 需大于 0"); return Math.log(x); }
+        case "log":  { if(x <= 0) throw new Error("log 需大于 0"); return Math.log10(x); }
+        case "sqrt": { if(x < 0) throw new Error("√ 负数"); return Math.sqrt(x); }
+        default: throw new Error("未知函数");
+      }
+    }
+    function clamp(v,a,b){ return Math.min(b, Math.max(a, v)); }
+
+    const result = parseExpr();
+    if(pos < tokens.length) throw new Error("表达式错误");
+    return result;
+  }
+
+  function evaluate(){
+    if(!expr.trim()) return;
+    let tokens;
+    try{
+      tokens = tokenize(expr);
+      if(tokens.length === 0) return;
+      const val = parse(tokens);
+      if(!isFinite(val)) throw new Error("结果超出范围");
+      historyEl.innerHTML = escapeHtml(expr) + " =";
+      expr = formatNumber(val);
+      currentEl.textContent = expr;
+      currentEl.classList.remove("err");
+      justEvaluated = true;
+    }catch(e){
+      currentEl.textContent = "错误: " + e.message;
+      currentEl.classList.add("err");
+      justEvaluated = true;
+    }
+  }
+
+  function formatNumber(n){
+    if(Number.isInteger(n)) return String(n);
+    let r = parseFloat(n.toPrecision(12));
+    return String(r);
+  }
+
+  function escapeHtml(s){
+    return s.replace(/[&<>"']/g, m => ({ "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;" }[m]));
+  }
+
+  // ---------- 输入处理 ----------
+  function insert(text){
+    if(justEvaluated){
+      // 运算符/函数接续，数字则重新开始
+      if(/^[+\-*/^%.)!]/.test(text) || text === "mod"){
+        justEvaluated = false;
+      }else{
+        expr = "";
+        justEvaluated = false;
+      }
+    }
+    expr += text;
+    render();
+  }
+
+  function appendFunc(name){
+    if(justEvaluated) { expr = ""; justEvaluated = false; }
+    const map = {
+      sin:"sin(", cos:"cos(", tan:"tan(",
+      asin:"asin(", acos:"acos(", atan:"atan(",
+      ln:"ln(", log:"log(", sqrt:"sqrt("
+    };
+    expr += map[name];
+    render();
+  }
+
+  function render(){
+    currentEl.textContent = expr === "" ? "0" : expr;
+    currentEl.classList.remove("err");
+  }
+
+  function backspace(){
+    if(justEvaluated){ expr = ""; justEvaluated = false; render(); return; }
+    // 若删除到函数名，整体删除
+    const funcs = ["sqrt(","asin(","acos(","atan(","sin(","cos(","tan(","ln(","log("];
+    for(const f of funcs){
+      if(expr.endsWith(f)){ expr = expr.slice(0, expr.length - f.length); render(); return; }
+    }
+    if(expr.endsWith("mod")){ expr = expr.slice(0, expr.length-3); render(); return; }
+    expr = expr.slice(0, -1);
+    render();
+  }
+
+  function clearAll(){
+    expr = ""; historyEl.innerHTML = "&nbsp;";
+    justEvaluated = false;
+    render();
+  }
+
+  function toggleSign(){
+    if(justEvaluated){ justEvaluated = false; }
+    if(expr === ""){ expr = "-"; render(); return; }
+    // 对当前最后一个数字/括号结果取反：简单包一层负号
+    expr = "(-" + expr + ")";
+    render();
+  }
+
+  // ---------- 按钮绑定 ----------
+  document.getElementById("keys").addEventListener("click", e => {
+    const btn = e.target.closest("button");
+    if(!btn) return;
+    if(btn.dataset.digit !== undefined){ insert(btn.dataset.digit); return; }
+    if(btn.dataset.op !== undefined){
+      const sym = { "+":"+", "-":"-", "*":"*", "/":"/" }[btn.dataset.op];
+      insert(sym); return;
+    }
+    if(btn.dataset.const !== undefined){ insert(btn.dataset.const); return; }
+    if(btn.dataset.func !== undefined){
+      const f = btn.dataset.func;
+      if(f === "pow2"){ insert("^2"); return; }
+      if(f === "pow"){ insert("^"); return; }
+      if(f === "fact"){ insert("!"); return; }
+      if(f === "inv"){ insert("1/("); return; }
+      appendFunc(f); return;
+    }
+    const act = btn.dataset.action;
+    switch(act){
+      case "(": insert("("); break;
+      case ")": insert(")"); break;
+      case ".": insert("."); break;
+      case "%": insert("%"); break;
+      case "mod": insert("mod"); break;
+      case "exp": insert("e"); break;
+      case "back": backspace(); break;
+      case "ac": clearAll(); break;
+      case "neg": toggleSign(); break;
+      case "eq": evaluate(); break;
+    }
+  });
+
+  // 角度/弧度切换
+  function setMode(m){
+    mode = m;
+    degBtn.classList.toggle("on", m === "deg");
+    radBtn.classList.toggle("on", m === "rad");
+  }
+  degBtn.addEventListener("click", () => setMode("deg"));
+  radBtn.addEventListener("click", () => setMode("rad"));
+
+  // ---------- 键盘支持 ----------
+  document.addEventListener("keydown", e => {
+    const k = e.key;
+    if(/^[0-9.]$/.test(k)){ insert(k); }
+    else if(["+","-","*","/","^","%","("].includes(k)){ insert(k); }
+    else if(k === ")"){ insert(")"); }
+    else if(k === "!"){ insert("!"); }
+    else if(k === "Enter" || k === "="){ e.preventDefault(); evaluate(); }
+    else if(k === "Backspace"){ backspace(); }
+    else if(k === "Escape"){ clearAll(); }
+  });
+
+  render();
+})();
+</script>
+</body>
+</html>
