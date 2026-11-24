@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>标准时间 · World Clock</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC",
+      "Microsoft YaHei", "Noto Sans SC", sans-serif;
+    background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
+    color: #f1f5f9;
+    padding: 20px;
+  }
+  .card {
+    width: 100%;
+    max-width: 480px;
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 24px;
+    padding: 36px 32px;
+    backdrop-filter: blur(12px);
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.35);
+  }
+  .header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 28px;
+  }
+  h1 {
+    font-size: 20px;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+  }
+  .switch {
+    display: flex;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 10px;
+    overflow: hidden;
+  }
+  .switch button {
+    border: none;
+    background: transparent;
+    color: #cbd5e1;
+    padding: 7px 14px;
+    font-size: 14px;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .switch button.active {
+    background: #38bdf8;
+    color: #0f172a;
+    font-weight: 600;
+  }
+  .clock {
+    text-align: center;
+    margin: 10px 0 8px;
+  }
+  .time {
+    font-size: 60px;
+    font-weight: 700;
+    font-variant-numeric: tabular-nums;
+    letter-spacing: 2px;
+    line-height: 1.1;
+  }
+  .time .period {
+    font-size: 22px;
+    font-weight: 600;
+    color: #94a3b8;
+    margin-left: 8px;
+    letter-spacing: 0;
+  }
+  .date {
+    margin-top: 12px;
+    font-size: 17px;
+    color: #cbd5e1;
+  }
+  .region {
+    margin-top: 6px;
+    font-size: 14px;
+    color: #94a3b8;
+    min-height: 18px;
+  }
+  .region.error { color: #f87171; }
+  .controls {
+    margin-top: 30px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+  .field label {
+    display: block;
+    font-size: 13px;
+    color: #94a3b8;
+    margin-bottom: 8px;
+  }
+  select, input[type="text"] {
+    width: 100%;
+    padding: 12px 14px;
+    border-radius: 12px;
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    background: rgba(15, 23, 42, 0.6);
+    color: #f1f5f9;
+    font-size: 15px;
+    outline: none;
+    cursor: pointer;
+  }
+  input[type="text"] { cursor: text; }
+  select:focus, input[type="text"]:focus { border-color: #38bdf8; }
+  .custom-box { margin-top: 10px; display: none; }
+  .custom-box.visible { display: block; }
+  .hint {
+    margin-top: 6px;
+    font-size: 12px;
+    color: #64748b;
+  }
+  .footer {
+    margin-top: 24px;
+    text-align: center;
+    font-size: 12px;
+    color: #64748b;
+  }
+  @media (max-width: 420px) {
+    .time { font-size: 44px; }
+    .card { padding: 28px 22px; }
+  }
+</style>
+</head>
+<body>
+  <div class="card">
+    <div class="header">
+      <h1 id="title">标准时间</h1>
+      <div class="switch">
+        <button id="btnZh" class="active" onclick="setLang('zh-CN')">中文</button>
+        <button id="btnEn" onclick="setLang('en')">EN</button>
+      </div>
+    </div>
+
+    <div class="clock">
+      <div class="time" id="time">--:--:--<span class="period" id="period"></span></div>
+      <div class="date" id="date"></div>
+      <div class="region" id="region"></div>
+    </div>
+
+    <div class="controls">
+      <div class="field">
+        <label id="tzLabel">时区</label>
+        <select id="tzSelect"></select>
+        <div class="custom-box" id="customBox">
+          <input type="text" id="customTz" autocomplete="off" spellcheck="false">
+          <div class="hint" id="customHint"></div>
+        </div>
+      </div>
+
+      <div class="field">
+        <label id="hourLabel">小时制</label>
+        <div class="switch">
+          <button id="btn24" class="active" onclick="setHour12(false)">24H</button>
+          <button id="btn12" onclick="setHour12(true)">12H</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="footer" id="footer">基于浏览器本地时钟实时更新</div>
+  </div>
+
+<script>
+  // ===== 时区选项（IANA 标识）=====
+  const TIMEZONES = [
+    { value: "local", zh: "本地时间", en: "Local Time" },
+    { value: "UTC",    zh: "协调世界时 (UTC)", en: "Coordinated Universal Time (UTC)" },
+    { value: "Asia/Shanghai", zh: "北京 / 上海", en: "Beijing / Shanghai" },
+    { value: "Asia/Hong_Kong", zh: "香港", en: "Hong Kong" },
+    { value: "Asia/Tokyo", zh: "东京", en: "Tokyo" },
+    { value: "Asia/Singapore", zh: "新加坡", en: "Singapore" },
+    { value: "Asia/Dubai", zh: "迪拜", en: "Dubai" },
+    { value: "Europe/London", zh: "伦敦", en: "London" },
+    { value: "Europe/Paris", zh: "巴黎", en: "Paris" },
+    { value: "America/New_York", zh: "纽约", en: "New York" },
+    { value: "America/Los_Angeles", zh: "洛杉矶", en: "Los Angeles" },
+    { value: "Australia/Sydney", zh: "悉尼", en: "Sydney" },
+    { value: "custom", zh: "自定义时区…", en: "Custom time zone…" }
+  ];
+
+  // ===== 界面文案 =====
+  const I18N = {
+    "zh-CN": {
+      title: "标准时间",
+      tzLabel: "时区",
+      hourLabel: "小时制",
+      footer: "基于浏览器本地时钟实时更新",
+      regionFmt: "时区：{tz}",
+      customPlaceholder: "输入 IANA 标识，如 Asia/Tokyo",
+      customHint: "可在时区列表中查找 IANA 名称，例如 Europe/Berlin、America/Sao_Paulo",
+      invalidTz: "无效的时区标识，请检查拼写后重试",
+      emptyTz: "请输入时区标识（如 Asia/Tokyo）"
+    },
+    "en": {
+      title: "World Clock",
+      tzLabel: "Time Zone",
+      hourLabel: "Hour Format",
+      footer: "Updated in real time from your browser clock",
+      regionFmt: "Time zone: {tz}",
+      customPlaceholder: "Enter IANA name, e.g. Asia/Tokyo",
+      customHint: "Look up the IANA name, e.g. Europe/Berlin, America/Sao_Paulo",
+      invalidTz: "Invalid time zone identifier, please check the spelling",
+      emptyTz: "Please enter a time zone (e.g. Asia/Tokyo)"
+    }
+  };
+
+  let lang = "zh-CN";
+  let tz = "local";
+  let hour12 = false;
+  let customTz = "";        // 用户输入的原始值
+  let validCustomTz = null; // 校验通过的自定义时区
+
+  const tzSelect = document.getElementById("tzSelect");
+  const customBox = document.getElementById("customBox");
+  const customInput = document.getElementById("customTz");
+  const customHint = document.getElementById("customHint");
+  const regionEl = document.getElementById("region");
+
+  // 填充时区下拉
+  TIMEZONES.forEach(item => {
+    const opt = document.createElement("option");
+    opt.value = item.value;
+    opt.textContent = item[lang === "zh-CN" ? "zh" : "en"];
+    tzSelect.appendChild(opt);
+  });
+
+  tzSelect.addEventListener("change", e => {
+    tz = e.target.value;
+    customBox.classList.toggle("visible", tz === "custom");
+    if (tz === "custom") {
+      customInput.focus();
+      validateCustom();
+    }
+    render();
+  });
+
+  customInput.addEventListener("input", () => { validateCustom(); render(); });
+
+  function isValidTz(name) {
+    if (!name) return false;
+    try {
+      new Intl.DateTimeFormat("en", { timeZone: name });
+      return true;
+    } catch (e) {
+      return false;
+    }
+  }
+
+  function validateCustom() {
+    customTz = customInput.value.trim();
+    if (!customTz) {
+      validCustomTz = null;
+      return "empty";
+    }
+    if (isValidTz(customTz)) {
+      validCustomTz = customTz;
+      return "ok";
+    }
+    validCustomTz = null;
+    return "invalid";
+  }
+
+  function setLang(next) {
+    lang = next;
+    document.getElementById("btnZh").classList.toggle("active", lang === "zh-CN");
+    document.getElementById("btnEn").classList.toggle("active", lang === "en");
+    document.documentElement.lang = lang;
+    [...tzSelect.options].forEach((opt, i) => {
+      opt.textContent = TIMEZONES[i][lang === "zh-CN" ? "zh" : "en"];
+    });
+    render();
+  }
+
+  function setHour12(v) {
+    hour12 = v;
+    document.getElementById("btn12").classList.toggle("active", hour12);
+    document.getElementById("btn24").classList.toggle("active", !hour12);
+    render();
+  }
+
+  function resolveTz() {
+    if (tz === "local") return Intl.DateTimeFormat().resolvedOptions().timeZone;
+    if (tz === "custom") return validCustomTz; // 可能为 null
+    return tz;
+  }
+
+  function render() {
+    const dict = I18N[lang];
+    const now = new Date();
+    let zone = resolveTz();
+    let error = false;
+
+    document.getElementById("title").textContent = dict.title;
+    document.getElementById("tzLabel").textContent = dict.tzLabel;
+    document.getElementById("hourLabel").textContent = dict.hourLabel;
+    document.getElementById("footer").textContent = dict.footer;
+    customInput.placeholder = dict.customPlaceholder;
+    customHint.textContent = dict.customHint;
+
+    // 自定义时区校验提示
+    if (tz === "custom") {
+      const status = validateCustom();
+      if (status === "empty") {
+        regionEl.textContent = dict.emptyTz;
+        regionEl.classList.add("error");
+        error = true;
+      } else if (status === "invalid") {
+        regionEl.textContent = dict.invalidTz;
+        regionEl.classList.add("error");
+        error = true;
+      }
+    }
+
+    // 自定义无效时回退到本地时区显示时间
+    if (!zone) zone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+
+    const timeFmt = new Intl.DateTimeFormat(lang, {
+      hour: "2-digit", minute: "2-digit", second: "2-digit",
+      hour12: hour12, timeZone: zone
+    });
+    const parts = timeFmt.formatToParts(now);
+    const get = type => (parts.find(p => p.type === type) || {}).value || "";
+    const h = get("hour"), m = get("minute"), s = get("second");
+    const period = get("dayPeriod") || get("dayPeriodName") || "";
+
+    document.getElementById("time").innerHTML =
+      `${h}:${m}:${s}${period ? `<span class="period">${period}</span>` : ""}`;
+
+    const dateFmt = new Intl.DateTimeFormat(lang, {
+      weekday: "long", year: "numeric", month: "long", day: "numeric",
+      timeZone: zone
+    });
+    document.getElementById("date").textContent = dateFmt.format(now);
+
+    if (!error) {
+      regionEl.classList.remove("error");
+      regionEl.textContent = dict.regionFmt.replace("{tz}", zone);
+    }
+  }
+
+  render();
+  setInterval(render, 250);
+</script>
+</body>
+</html>
+<!-- （注：内容由AI生成） -->
